@@ -1,0 +1,22 @@
+data:
+  # - http://www.jkawamoto.info/lib/tpl/zenlike/images/apple-touch-icon.png:/tmp
+  # - http://www.ieee.org/documents/IEEEtranBST2.zip:/tmp
+  # - gs://jkawamoto-ppls/startup/review.sh
+  - dropbox://www.dropbox.com/s/6malv35rl46ta8k/abyss.jpg:/tmp
+  - dropbox://www.dropbox.com/sh/5kj86bpq4icin3h/AACFAy7q-c_t_xIC8JlacEfsa:/tmp
+# Only url: download and set it in /root/.
+# URL+DEST: download and set them to the destination.
+# if URL ends with .zip, automatically expanded.
+# Schema support:
+#   http and https
+#   gs: will use gsutil
+#   dropbox: adding ?dl=1 and will be expanded
+
+run:
+  - speficic command
+
+result:
+  - FILEPATTERN
+  - FILEPATTERN:DEST
+
+shutdown: false
