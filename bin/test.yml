@@ -17,7 +17,9 @@ run:
   - pwd
 
 result:
-  - FILEPATTERN
-  - FILEPATTERN:DEST
+  destination: gs://jkawamoto-ppls/kawamoto.junpei/
+  pattern:
+    - "*.py"
+#    - FILEPATTERN:DEST
 
 shutdown: false
