@@ -1,10 +1,11 @@
 #! /usr/bin/env python
+import argparse
 import glob
 import os
 import subprocess
+import shutdown
 import sys
 import yaml
-
 from downloader import download
 
 
@@ -42,6 +43,7 @@ def run(conf):
     Args:
       conf: Redable object consists of conf file.
     """
+    print conf
     obj = yaml.load(conf)
 
     # Prepare data.
@@ -64,14 +66,17 @@ def run(conf):
     for path in glob.iglob(TEMPPATH.format("*")):
         os.remove(path)
 
+    # Shutdown.
+    shutdown.shutdown()
+
 
 def main():
     """ The main function.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "conf", nargs="+", default=sys.stdin, type=argparse.FileType("w")
-        help="")
+        "conf", nargs="?", default=sys.stdin, type=argparse.FileType("r"),
+        help="Path to a configure YAML file. (default: stdin)")
 
     run(**vars(parser.parse_args()))
 
