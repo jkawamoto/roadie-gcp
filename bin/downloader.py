@@ -64,6 +64,16 @@ def dropbox(url, dest):
 
 def download(url):
     """ Download an object specified by a url.
+
+    Url can has a destination path. The format is
+      scheme://host/path
+      scheme://host/path:dest
+    where dest is the destination path.
+
+    Scheme is one of http, https, gs, dropbox.
+
+    Args:
+      url: An extended url specifying the url of an object and an destination path.
     """
     # Check the url contains a destination path.
     dest = "."
