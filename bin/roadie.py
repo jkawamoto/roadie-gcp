@@ -8,8 +8,10 @@ import sys
 import yaml
 from downloader import download
 
-
+# Template path of temporary files.
 TEMPPATH = "/tmp/stdout{0}.txt"
+
+
 def execute(command, stdout, stderr=sys.stdout):
     """ Run a given command.
 
@@ -37,13 +39,13 @@ def upload(pat, dest):
 
 
 # whether runner should stop when getting status codes not 0?
-def run(conf):
+def run(conf, halt):
     """ Run.
 
     Args:
       conf: Redable object consists of conf file.
+      halt: If True, shutdown the VM this program running on.
     """
-    print conf
     obj = yaml.load(conf)
 
     # Prepare data.
@@ -67,7 +69,8 @@ def run(conf):
         os.remove(path)
 
     # Shutdown.
-    shutdown.shutdown()
+    if halt:
+        shutdown.shutdown()
 
 
 def main():
@@ -77,9 +80,16 @@ def main():
     parser.add_argument(
         "conf", nargs="?", default=sys.stdin, type=argparse.FileType("r"),
         help="Path to a configure YAML file. (default: stdin)")
+    parser.add_argument(
+        "--no-shutdown", default=True, action="store_false", dest="halt",
+        help="Not shutdown after finishing tasks."
+        )
 
     run(**vars(parser.parse_args()))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(1)
