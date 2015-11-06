@@ -91,6 +91,21 @@ def download(url):
         os.remove(path)
 
 
+TEMPPATH = "/tmp/stdout{0}.txt"
+def run(command, step=1):
+    """ Run a given command.
+
+    Args:
+      command: a string specifying command to be run.
+      step: step number used for files saving stdout.
+    """
+    # Does tail work to watch stdout to logging service?
+    with open(TEMPPATH.format(step), "w") as stdout:
+        print command
+        p = subprocess.Popen(
+            command, shell=True, stdout=stdout, stderr=sys.stdout)
+        p.wait()
+
 
 with open("test.yml") as fp:
     obj = yaml.load(fp)
@@ -98,3 +113,6 @@ with open("test.yml") as fp:
 
     for url in obj["data"]:
         download(url)
+
+    for i, com in enumerate(obj["run"]):
+        run(com, i + 1)

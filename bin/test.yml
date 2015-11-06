@@ -13,7 +13,8 @@ data:
 #   dropbox: adding ?dl=1 and will be expanded
 
 run:
-  - speficic command
+  - ls -a
+  - pwd
 
 result:
   - FILEPATTERN
