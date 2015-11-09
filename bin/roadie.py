@@ -77,7 +77,7 @@ def run(conf, halt):
     upload(TEMPPATH.format("*"), dest)
     if PATTERN in obj[RESULT]:
         for pat in obj[RESULT][PATTERN]:
-            LOGGER.info("Uploading {0}".format(url))
+            LOGGER.info("Uploading {0}".format(pat))
             upload(pat, dest)
 
     # Garbage collection.
