@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+""" The main module of roadie-gcp.
+"""
 import argparse
 import glob
 import os
@@ -11,7 +13,14 @@ from downloader import download
 # Template path of temporary files.
 TEMPPATH = "/tmp/stdout{0}.txt"
 
+# Static variables.
+DATA = "data"
+RUN = "run"
+RESULT = "result"
+DESTINATION = "destination"
+PATTERN = "pattern"
 
+# TODO: Add logging.
 def execute(command, stdout, stderr=sys.stdout):
     """ Run a given command.
 
@@ -49,20 +58,21 @@ def run(conf, halt):
     obj = yaml.load(conf)
 
     # Prepare data.
-    if "data" in obj:
-        for url in obj["data"]:
+    if DATA in obj:
+        for url in obj[DATA]:
             download(url)
 
     # Run command.
-    for i, com in enumerate(obj["run"]):
+    for i, com in enumerate(obj[RUN]):
         with open(TEMPPATH.format(i), "w") as fp:
             execute(com, fp)
 
     # Upload results.
-    dest = obj["result"]["destination"]
+    dest = obj[RESULT][DESTINATION]
     upload(TEMPPATH.format("*"), dest)
-    for pat in obj["result"]["pattern"]:
-        upload(pat, dest)
+    if PATTERN in obj[RESULT]:
+        for pat in obj[RESULT][PATTERN]:
+            upload(pat, dest)
 
     # Garbage collection.
     for path in glob.iglob(TEMPPATH.format("*")):
