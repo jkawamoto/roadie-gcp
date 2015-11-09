@@ -71,13 +71,13 @@ def run(conf, halt):
     # Prepare data.
     if DATA in obj:
         for url in obj[DATA]:
-            LOGGER.info("Loading {0}".format(url))
+            LOGGER.info("Loading %s", url)
             download(url)
 
     # Run command.
     for i, com in enumerate(obj[RUN]):
         with open(TEMPPATH.format(i), "w") as fp:
-            LOGGER.info("Running {0}".format(com))
+            LOGGER.info("Running %s", com)
             execute(com, fp)
 
     # Upload results.
@@ -86,7 +86,7 @@ def run(conf, halt):
     upload(TEMPPATH.format("*"), dest)
     if PATTERN in obj[RESULT]:
         for pat in obj[RESULT][PATTERN]:
-            LOGGER.info("Uploading {0}".format(url))
+            LOGGER.info("Uploading %s", pat)
             upload(pat, dest)
 
     # Garbage collection.
