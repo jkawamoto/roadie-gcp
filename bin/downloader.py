@@ -1,3 +1,12 @@
+#
+# downloader.py
+#
+# Copyright (c) 2015 Junpei Kawamoto
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
 """ Download objects from several services.
 """
 import os

@@ -1,6 +1,18 @@
 #! /usr/bin/env python
+#
+# roadie.py
+#
+# Copyright (c) 2015 Junpei Kawamoto
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+""" The main module of roadie-gcp.
+"""
 import argparse
 import glob
+import logging
 import os
 import subprocess
 import shutdown
@@ -11,6 +23,14 @@ from downloader import download
 # Template path of temporary files.
 TEMPPATH = "/tmp/stdout{0}.txt"
 
+# Static variables.
+DATA = "data"
+RUN = "run"
+RESULT = "result"
+DESTINATION = "destination"
+PATTERN = "pattern"
+
+LOGGER = logging.getLogger(__name__)
 
 def execute(command, stdout, stderr=sys.stdout):
     """ Run a given command.
@@ -21,9 +41,9 @@ def execute(command, stdout, stderr=sys.stdout):
       stderr: Writable object to which stderr of subprocess connects.
     """
     # Does tail work to watch stdout to logging service?
-    p = subprocess.Popen(
+    proc = subprocess.Popen(
         command, shell=True, stdout=stdout, stderr=stderr)
-    p.wait()
+    proc.wait()
 
 
 def upload(pat, dest):
@@ -33,9 +53,9 @@ def upload(pat, dest):
       pat: Pattern of objects to be uploaded.
       dest: Destination URL.
     """
-    p = subprocess.Popen(
+    proc = subprocess.Popen(
         ["gsutil", "cp", pat, dest], stdout=sys.stdout)
-    p.wait()
+    proc.wait()
 
 
 # whether runner should stop when getting status codes not 0?
@@ -49,20 +69,25 @@ def run(conf, halt):
     obj = yaml.load(conf)
 
     # Prepare data.
-    if "data" in obj:
-        for url in obj["data"]:
+    if DATA in obj:
+        for url in obj[DATA]:
+            LOGGER.info("Loading {0}".format(url))
             download(url)
 
     # Run command.
-    for i, com in enumerate(obj["run"]):
+    for i, com in enumerate(obj[RUN]):
         with open(TEMPPATH.format(i), "w") as fp:
+            LOGGER.info("Running {0}".format(com))
             execute(com, fp)
 
     # Upload results.
-    dest = obj["result"]["destination"]
+    dest = obj[RESULT][DESTINATION]
+    LOGGER.info("Uploading stdout.")
     upload(TEMPPATH.format("*"), dest)
-    for pat in obj["result"]["pattern"]:
-        upload(pat, dest)
+    if PATTERN in obj[RESULT]:
+        for pat in obj[RESULT][PATTERN]:
+            LOGGER.info("Uploading {0}".format(url))
+            upload(pat, dest)
 
     # Garbage collection.
     for path in glob.iglob(TEMPPATH.format("*")):
@@ -89,7 +114,10 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
     try:
         main()
     except KeyboardInterrupt:
         sys.exit(1)
+    finally:
+        logging.shutdown()
