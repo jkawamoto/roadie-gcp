@@ -66,36 +66,39 @@ def run(conf, halt):
       conf: Redable object consists of conf file.
       halt: If True, shutdown the VM this program running on.
     """
-    obj = yaml.load(conf)
+    try:
+        # Loading conf.
+        obj = yaml.load(conf)
 
-    # Prepare data.
-    if DATA in obj:
-        for url in obj[DATA]:
-            LOGGER.info("Loading %s", url)
-            download(url)
+        # Prepare data.
+        if DATA in obj:
+            for url in obj[DATA]:
+                LOGGER.info("Loading %s", url)
+                download(url)
 
-    # Run command.
-    for i, com in enumerate(obj[RUN]):
-        with open(TEMPPATH.format(i), "w") as fp:
-            LOGGER.info("Running %s", com)
-            execute(com, fp)
+        # Run command.
+        for i, com in enumerate(obj[RUN]):
+            with open(TEMPPATH.format(i), "w") as fp:
+                LOGGER.info("Running %s", com)
+                execute(com, fp)
 
-    # Upload results.
-    dest = obj[RESULT][DESTINATION]
-    LOGGER.info("Uploading stdout.")
-    upload(TEMPPATH.format("*"), dest)
-    if PATTERN in obj[RESULT]:
-        for pat in obj[RESULT][PATTERN]:
-            LOGGER.info("Uploading %s", pat)
-            upload(pat, dest)
+        # Upload results.
+        dest = obj[RESULT][DESTINATION]
+        LOGGER.info("Uploading stdout.")
+        upload(TEMPPATH.format("*"), dest)
+        if PATTERN in obj[RESULT]:
+            for pat in obj[RESULT][PATTERN]:
+                LOGGER.info("Uploading %s", pat)
+                upload(pat, dest)
 
-    # Garbage collection.
-    for path in glob.iglob(TEMPPATH.format("*")):
-        os.remove(path)
+        # Garbage collection.
+        for path in glob.iglob(TEMPPATH.format("*")):
+            os.remove(path)
 
-    # Shutdown.
-    if halt:
-        shutdown.shutdown()
+    finally:
+        # Shutdown.
+        if halt:
+            shutdown.shutdown()
 
 
 def main():
