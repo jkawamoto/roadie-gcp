@@ -26,7 +26,7 @@ def curl(url, dest):
       Downloaded filename.
     """
     p = subprocess.Popen(
-        ["curl", "-O", urlparse.urlunparse(url)], stdout=sys.stdout, cwd=dest)
+        ["curl", "-O", urlparse.urlunparse(url), "--compressed"], stdout=sys.stdout, cwd=dest)
     p.wait()
 
     return dest + url.path[url.path.rfind("/"):]
@@ -65,7 +65,7 @@ def dropbox(url, dest):
         filename += ".zip"
     filepath = dest + filename
     p = subprocess.Popen(
-        ["wget", new_url, "-O", filepath], stdout=sys.stdout)
+        ["curl", "-L", new_url, "-o", filepath, "--compressed"], stdout=sys.stdout)
     p.wait()
 
     return filepath

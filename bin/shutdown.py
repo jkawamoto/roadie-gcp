@@ -11,6 +11,7 @@
 """ Shuddown my insance.
 """
 import logging
+import sys
 import urllib2
 from apiclient import discovery
 from auth import Auth
@@ -18,6 +19,7 @@ from auth import Auth
 _INSTANCE = "http://169.254.169.254/computeMetadata/v1/instance/"
 _PROJECT = "http://169.254.169.254/computeMetadata/v1/project/"
 
+LOGGER = logging.getLogger(__name__)
 
 def _get(url):
     """ Create a request object for a given url.
@@ -35,25 +37,45 @@ def _get(url):
 
 def shutdown():
     """ Shutdown the instance where this method is called.
+
+    Returns:
+      True if there are no errors.
     """
-    auth = Auth()
-    instance = _get(_INSTANCE + "hostname").split(".")[0]
-    zone = _get(_INSTANCE + "zone").split("/")[-1]
-    project = _get(_PROJECT + "project-id")
+    try:
+        auth = Auth()
+        instance = _get(_INSTANCE + "hostname").split(".")[0]
+        zone = _get(_INSTANCE + "zone").split("/")[-1]
+        project = _get(_PROJECT + "project-id")
 
-    logging.info("Instance %s will be shut down.", instance)
+        logging.info("Instance %s will be shut down.", instance)
 
-    sp = discovery.build("compute", "v1")
-    req = sp.instances().delete(project=project, zone=zone, instance=instance)
-    req.headers["Authorization"] = auth.header_str()
-    req.execute()
+        sp = discovery.build("compute", "v1")
+        req = sp.instances().delete(project=project, zone=zone, instance=instance)
+        req.headers["Authorization"] = auth.header_str()
+
+        req.execute()
+        return True
+
+    except urllib2.URLError as e:
+        LOGGER.warning("Shutdown was interrupted. (%s)", e)
+        return False
 
 
 def main():
     """ The main function.
+
+    Returns:
+      True if there are no errors.
     """
-    shutdown()
+    return shutdown()
 
 
 if __name__ == "__main__":
-    main()
+    logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+    try:
+        if not main():
+            sys.exit(1)
+    except KeyboardInterrupt:
+        sys.exit(1)
+    finally:
+        logging.shutdown()

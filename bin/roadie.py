@@ -104,10 +104,11 @@ def run(conf, halt):
 def main():
     """ The main function.
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Read an instruction from STDIN and run programs in that way.")
     parser.add_argument(
-        "conf", nargs="?", default=sys.stdin, type=argparse.FileType("r"),
-        help="Path to a configure YAML file. (default: stdin)")
+        "-c", "--conf", default=sys.stdin, type=argparse.FileType("r"),
+        help="Specify an instruction YAML file instead of STDIN.")
     parser.add_argument(
         "--no-shutdown", default=True, action="store_false", dest="halt",
         help="Not shutdown after finishing tasks."
