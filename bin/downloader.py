@@ -10,6 +10,7 @@
 """ Download objects from several services.
 """
 import contextlib
+import gzip
 import logging
 import os
 import re
@@ -23,6 +24,20 @@ import urlparse
 LOGGER = logging.getLogger(__name__)
 
 
+def _open_url(url):
+    """ Open a URL by urllib2 via gzip encoding.
+
+    Args:
+      url: URL string.
+
+    Returns:
+      Response object returned by urllib2.urlopen.
+    """
+    req = urllib2.Request(url)
+    req.add_header("Accept-encoding", "gzip")
+    return urllib2.urlopen(req)
+
+
 def _copy_response(res, dest):
     """ Copy a response opened by urllib2 to a destination.
 
@@ -30,6 +45,9 @@ def _copy_response(res, dest):
       res: Response made by urllib2.urlopen.
       dest: Destination path.
     """
+    if res.info().get("Content-Encoding") == "gzip":
+        res = gzip.GzipFile(fileobj=res)
+
     with open(dest, "wb") as fp:
         shutil.copyfileobj(res, fp)
 
@@ -44,7 +62,7 @@ def curl(url, dest):
     Returns:
       Path for the downloaded file.
     """
-    with contextlib.closing(urllib2.urlopen(urlparse.urlunparse(url))) as res:
+    with contextlib.closing(_open_url(urlparse.urlunparse(url))) as res:
         _copy_response(res, dest)
 
     return dest
@@ -61,7 +79,7 @@ def gsutil(url, dest):
       Path for the downloaded file.
     """
     p = subprocess.Popen(
-        ["gsutil", "cp", urlparse.urlunparse(url), filename], stdout=sys.stdout)
+        ["gsutil", "cp", urlparse.urlunparse(url), dest], stdout=sys.stdout)
     p.wait()
     return dest
 
@@ -78,7 +96,7 @@ def dropbox(url, dest):
     """
     new_url = "https://{host}{path}?dl=1".format(host=url.netloc, path=url.path)
 
-    with contextlib.closing(urllib2.urlopen(new_url)) as res:
+    with contextlib.closing(_open_url(new_url)) as res:
         disposition = res.info().getheader("content-disposition")
         match = re.search("filename=\"(.*)\";", disposition)
         if match and match.group(1).endswith(".zip"):
