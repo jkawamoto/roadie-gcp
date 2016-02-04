@@ -1,7 +1,7 @@
 #
 # downloader.py
 #
-# Copyright (c) 2015 Junpei Kawamoto
+# Copyright (c) 2015-2016 Junpei Kawamoto
 #
 # This software is released under the MIT License.
 #
@@ -9,9 +9,13 @@
 #
 """ Download objects from several services.
 """
+import contextlib
 import os
+import re
+import shutil
 import subprocess
 import sys
+import urllib2
 import urlparse
 
 
@@ -19,62 +23,63 @@ def curl(url, dest):
     """ Download an object using curl.
 
     Args:
-      url: Url specifying an object.
+      url: Parsed URL specifying an object.
       dest: Destination path.
 
     Returns:
-      Downloaded filename.
+      Path for the downloaded file.
     """
     p = subprocess.Popen(
-        ["curl", "-O", urlparse.urlunparse(url), "--compressed"], stdout=sys.stdout, cwd=dest)
+        ["curl", "-o", dest, "--compressed", urlparse.urlunparse(url)],
+        stdout=sys.stdout)
     p.wait()
-
-    return dest + url.path[url.path.rfind("/"):]
+    return dest
 
 
 def gsutil(url, dest):
     """ Download an object using gsutil.
 
     Args:
-      url: Url specifying an object.
+      url: Parsed URL specifying an object.
       dest: Destination path.
 
     Returns:
-      Downloaded filename.
+      Path for the downloaded file.
     """
     p = subprocess.Popen(
-        ["gsutil", "cp", urlparse.urlunparse(url), dest], stdout=sys.stdout)
+        ["gsutil", "cp", urlparse.urlunparse(url), filename], stdout=sys.stdout)
     p.wait()
-
-    return dest + url.path[url.path.rfind("/"):]
+    return dest
 
 
 def dropbox(url, dest):
     """ Download an object from dropbox.
 
     Args:
-      url: Url specifying an object.
+      url: Parsed URL specifying an object.
       dest: Destination path.
 
     Returns:
       Downloaded filename.
     """
     new_url = "https://{host}{path}?dl=1".format(host=url.netloc, path=url.path)
-    filename = url.path[url.path.rfind("/"):]
-    if filename.find(".") == -1:
-        filename += ".zip"
-    filepath = dest + filename
-    p = subprocess.Popen(
-        ["curl", "-L", new_url, "-o", filepath, "--compressed"], stdout=sys.stdout)
-    p.wait()
 
-    return filepath
+    with contextlib.closing(urllib2.urlopen(new_url)) as res:
+        disposition = res.info().getheader("content-disposition")
+        match = re.search("filename=\"(.*)\";", disposition)
+        if match and match.group(1).endswith(".zip"):
+            dest += ".zip"
+
+        with open(dest, "wb") as fp:
+            shutil.copyfileobj(res, fp)
+
+    return dest
 
 
 def download(url):
     """ Download an object specified by a url.
 
-    Url can has a destination path. The format is
+    Url can have a destination path. The format is
       scheme://host/path
       scheme://host/path:dest
     where dest is the destination path.
@@ -90,21 +95,25 @@ def download(url):
         dest = url[url.rfind(":")+1:]
         url = url[:url.rfind(":")]
 
-    url = urlparse.urlparse(url)
+    # Parse the URL.
+    purl = urlparse.urlparse(url)
 
+    # If the destination path is a directory, use filename as same as URL.
+    if os.path.isdir(dest) or dest[:-1] == "/":
+        dest = os.path.join(dest, purl.path[purl.path.rfind("/")+1:])
+
+    # Choose downloader.
     downloader = curl
-    if url.scheme == "gs":
+    if purl.scheme == "gs":
         downloader = gsutil
-
-    elif url.scheme == "dropbox":
+    elif purl.scheme == "dropbox":
         downloader = dropbox
 
-    path = downloader(url, dest)
+    res = downloader(purl, dest)
 
     # If donloaded file is a zip, unzip and remove it.
-    if path.endswith(".zip"):
+    if res.endswith(".zip"):
         p = subprocess.Popen(
-            ["unzip", "-o", path], stdout=sys.stdout, cwd=dest)
+            ["unzip", "-o", res], stdout=sys.stdout, cwd=os.path.dirname(res))
         p.wait()
-
-        os.remove(path)
+        os.remove(res)
