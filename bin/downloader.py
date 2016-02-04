@@ -19,6 +19,17 @@ import urllib2
 import urlparse
 
 
+def _copy_response(res, dest):
+    """ Copy a response opened by urllib2 to a destination.
+
+    Args:
+      res: Response made by urllib2.urlopen.
+      dest: Destination path.
+    """
+    with open(dest, "wb") as fp:
+        shutil.copyfileobj(res, fp)
+
+
 def curl(url, dest):
     """ Download an object using curl.
 
@@ -29,10 +40,9 @@ def curl(url, dest):
     Returns:
       Path for the downloaded file.
     """
-    p = subprocess.Popen(
-        ["curl", "-o", dest, "--compressed", urlparse.urlunparse(url)],
-        stdout=sys.stdout)
-    p.wait()
+    with contextlib.closing(urllib2.urlopen(urlparse.urlunparse(url))) as res:
+        _copy_response(res, dest)
+
     return dest
 
 
@@ -70,8 +80,7 @@ def dropbox(url, dest):
         if match and match.group(1).endswith(".zip"):
             dest += ".zip"
 
-        with open(dest, "wb") as fp:
-            shutil.copyfileobj(res, fp)
+        _copy_response(res, dest)
 
     return dest
 
