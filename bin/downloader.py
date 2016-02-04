@@ -10,6 +10,7 @@
 """ Download objects from several services.
 """
 import contextlib
+import logging
 import os
 import re
 import shutil
@@ -17,6 +18,9 @@ import subprocess
 import sys
 import urllib2
 import urlparse
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def _copy_response(res, dest):
@@ -118,10 +122,12 @@ def download(url):
     elif purl.scheme == "dropbox":
         downloader = dropbox
 
+    LOGGER.info("Downloading %s to %s", url, dest)
     res = downloader(purl, dest)
 
     # If donloaded file is a zip, unzip and remove it.
     if res.endswith(".zip"):
+        LOGGER.info("Unzipping %s", res)
         p = subprocess.Popen(
             ["unzip", "-o", res], stdout=sys.stdout, cwd=os.path.dirname(res))
         p.wait()
