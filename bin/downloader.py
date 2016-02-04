@@ -107,7 +107,7 @@ def dropbox(url, dest):
     return dest
 
 
-def download(url):
+def download(url, unzip=True):
     """ Download an object specified by a url.
 
     Url can have a destination path. The format is
@@ -119,6 +119,7 @@ def download(url):
 
     Args:
       url: An extended url specifying the url of an object and an destination path.
+      unzip: If True and the object specified by the url is zipped, unzip them.
     """
     # Check the url contains a destination path.
     dest = "."
@@ -144,7 +145,7 @@ def download(url):
     res = downloader(purl, dest)
 
     # If donloaded file is a zip, unzip and remove it.
-    if res.endswith(".zip"):
+    if unzip and res.endswith(".zip"):
         LOGGER.info("Unzipping %s", res)
         p = subprocess.Popen(
             ["unzip", "-o", res], stdout=sys.stdout, cwd=os.path.dirname(res))

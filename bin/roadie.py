@@ -15,10 +15,10 @@ import glob
 import logging
 import os
 import subprocess
-import shutdown
 import sys
 import yaml
 from downloader import download
+import shutdown
 
 # Template path of temporary files.
 TEMPPATH = "/tmp/stdout{0}.txt"
@@ -59,12 +59,13 @@ def upload(pat, dest):
 
 
 # whether runner should stop when getting status codes not 0?
-def run(conf, halt):
+def run(conf, halt, unzip):
     """ Run.
 
     Args:
       conf: Redable object consists of conf file.
       halt: If True, shutdown the VM this program running on.
+      unzip: If True and downloaded files are zipped, unzip them.
     """
     try:
         # Loading conf.
@@ -74,7 +75,7 @@ def run(conf, halt):
         if DATA in obj:
             for url in obj[DATA]:
                 LOGGER.info("Loading %s", url)
-                download(url)
+                download(url, unzip)
 
         # Run command.
         for i, com in enumerate(obj[RUN]):
@@ -112,6 +113,10 @@ def main():
     parser.add_argument(
         "--no-shutdown", default=True, action="store_false", dest="halt",
         help="Not shutdown after finishing tasks."
+        )
+    parser.add_argument(
+        "--no-unzip", default=True, action="store_false", dest="unzip",
+        help="Not unzip zipped files."
         )
 
     run(**vars(parser.parse_args()))

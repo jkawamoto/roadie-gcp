@@ -50,7 +50,8 @@ def shutdown():
         logging.info("Instance %s will be shut down.", instance)
 
         sp = discovery.build("compute", "v1")
-        req = sp.instances().delete(project=project, zone=zone, instance=instance)
+        req = sp.instances().delete( # pylint: disable=no-member
+            project=project, zone=zone, instance=instance)
         req.headers["Authorization"] = auth.header_str()
 
         req.execute()
