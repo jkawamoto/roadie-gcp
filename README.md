@@ -49,6 +49,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -c CONF, --conf CONF  Specify an instruction YAML file instead of STDIN.
   --no-shutdown         Not shutdown after finishing tasks.
+  --no-unzip            Not unzip zipped files.  
 ```
 
 Instruction
