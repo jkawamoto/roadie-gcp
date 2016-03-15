@@ -1,7 +1,7 @@
 #
 # Dockerfile
 #
-# Copyright (c) 2015 Junpei Kawamoto
+# Copyright (c) 2015-2016 Junpei Kawamoto
 #
 # This software is released under the MIT License.
 #
@@ -15,7 +15,7 @@ ENV TERM vt100
 RUN apt-get update && \
     apt-get install -y unzip libssl-dev python-pip \
             python-dev libffi-dev python-crypto python-openssl
-RUN pip install -U google-api-python-client gsutil pyyaml
+RUN pip install -U pip google-api-python-client gsutil pyyaml
 RUN echo "[GoogleCompute]\nservice_account = default" >> /etc/boto.cfg
 
 # Copy entrypoint
