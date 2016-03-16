@@ -1,3 +1,5 @@
+requirements.txt
+
 ### https://raw.github.com/github/gitignore/4215c0f78cf6ac52f3b943b7b0904cfc470d032e/python.gitignore
 
 # Byte-compiled / optimized / DLL files
@@ -62,5 +64,3 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
-
-

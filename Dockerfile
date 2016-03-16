@@ -10,12 +10,24 @@
 FROM ubuntu:latest
 MAINTAINER Junpei Kawamoto <kawamoto.junpei@gmail.com>
 
-# Install packages
+# Install packages.
 ENV TERM vt100
 RUN apt-get update && \
-    apt-get install -y unzip libssl-dev python-pip \
-            python-dev libffi-dev python-crypto python-openssl
-RUN pip install -U pip google-api-python-client gsutil pyyaml
+    apt-get install -y unzip libssl-dev python-pip python-dev libffi-dev && \
+    apt-get upgrade -y && apt-get clean && \
+    rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/
+RUN pip install -U pip pip-tools
+
+## Install python packages.
+ADD ./requirements.in ./
+RUN pip-compile && \
+    pip install -r requirements.txt && \
+    rm requirements.in requirements.txt
+
+## Install gsutil.
+ADD https://storage.googleapis.com/pub/gsutil.tar.gz /tmp
+RUN tar -zxvf /tmp/gsutil.tar.gz -C /usr/local
+ENV PATH $PATH:/usr/local/gsutil
 RUN echo "[GoogleCompute]\nservice_account = default" >> /etc/boto.cfg
 
 # Copy entrypoint
