@@ -2,9 +2,9 @@
 """ Test for downloader module.
 """
 import logging
-import os
 import sys
 import unittest
+import os
 from os import path
 import downloader
 
