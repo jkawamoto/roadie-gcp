@@ -1,0 +1,10 @@
+language: python
+python:
+  - 2.7
+install:
+  - pip install -U pip pip-tools
+  - pip-compile
+  - pip install -r requirements.txt
+script:
+  - python --version
+  - ./bin/downloader-test.py
