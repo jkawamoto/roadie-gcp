@@ -7,4 +7,5 @@ install:
   - pip install -r requirements.txt
 script:
   - python --version
-  - ./bin/downloader-test.py
+  - cd bin
+  - ./downloader-test.py

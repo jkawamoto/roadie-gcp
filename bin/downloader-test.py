@@ -9,6 +9,8 @@ from os import path
 import downloader
 
 SAMPLE_FILE = "https://raw.githubusercontent.com/jkawamoto/roadie-gcp/master/README.md"
+ORIGINAL_FILE = path.normpath(path.join(path.dirname(__file__), "..", "README.md"))
+print ORIGINAL_FILE
 
 
 class TestDownloader(unittest.TestCase):
@@ -21,7 +23,7 @@ class TestDownloader(unittest.TestCase):
         basename = path.basename(SAMPLE_FILE)
         self.assertTrue(path.exists(basename))
         self.assertEqual(
-            TestDownloader.read_file("../README.md"),
+            TestDownloader.read_file(ORIGINAL_FILE),
             TestDownloader.read_file(basename))
         os.remove(basename)
 
@@ -32,7 +34,7 @@ class TestDownloader(unittest.TestCase):
         target = "/tmp/" + path.basename(SAMPLE_FILE)
         self.assertTrue(path.exists(target))
         self.assertEqual(
-            TestDownloader.read_file("../README.md"),
+            TestDownloader.read_file(ORIGINAL_FILE),
             TestDownloader.read_file(target))
         os.remove(target)
 
@@ -43,7 +45,7 @@ class TestDownloader(unittest.TestCase):
         downloader.download(SAMPLE_FILE + ":" + target)
         self.assertTrue(path.exists(target))
         self.assertEqual(
-            TestDownloader.read_file("../README.md"),
+            TestDownloader.read_file(ORIGINAL_FILE),
             TestDownloader.read_file(target))
         os.remove(target)
 
@@ -54,7 +56,7 @@ class TestDownloader(unittest.TestCase):
         downloader.download(SAMPLE_FILE + ":" + target)
         self.assertTrue(path.exists(target))
         self.assertEqual(
-            TestDownloader.read_file("../README.md"),
+            TestDownloader.read_file(ORIGINAL_FILE),
             TestDownloader.read_file(target))
         os.remove(target)
 
