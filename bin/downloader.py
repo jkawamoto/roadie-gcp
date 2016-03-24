@@ -11,6 +11,7 @@
 """
 import contextlib
 import gzip
+import io
 import logging
 import os
 import re
@@ -46,7 +47,7 @@ def _copy_response(res, dest):
       dest: Destination path.
     """
     if res.info().get("Content-Encoding") == "gzip":
-        res = gzip.GzipFile(fileobj=res)
+        res = gzip.GzipFile(fileobj=io.BytesIO(res.read()))
 
     with open(dest, "wb") as fp:
         shutil.copyfileobj(res, fp)
