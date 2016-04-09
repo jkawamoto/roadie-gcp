@@ -28,7 +28,7 @@ RUN pip-compile && \
 ADD https://storage.googleapis.com/pub/gsutil.tar.gz /tmp
 RUN tar -zxvf /tmp/gsutil.tar.gz -C /usr/local
 ENV PATH $PATH:/usr/local/gsutil
-RUN echo "[GoogleCompute]\nservice_account = default" >> /etc/boto.cfg
+RUN echo "[GoogleCompute]\nservice_account = default\n[GSUtil]\nparallel_composite_upload_threshold" >> /etc/boto.cfg
 
 # Copy entrypoint
 COPY bin /root
