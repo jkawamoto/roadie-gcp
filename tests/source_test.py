@@ -13,6 +13,7 @@
 """
 import logging
 import tempfile
+import os
 import os.path
 import shutil
 import sys
@@ -23,6 +24,8 @@ from roadie import source  # pylint: disable=import-error
 REPO_SSH = "git@github.com:jkawamoto/roadie-gcp.git"
 REPO_HTTPS = "https://github.com/jkawamoto/roadie-gcp.git"
 CHECK_FILE = "README.md"
+
+_SSH_TEST = "SSH_TEST"
 
 
 class TestSource(unittest.TestCase):
@@ -42,6 +45,9 @@ class TestSource(unittest.TestCase):
         """
         shutil.rmtree(self.dir)
 
+    @unittest.skipUnless(
+        _SSH_TEST in os.environ and bool(os.environ[_SSH_TEST]),
+        "This test requires to deploy ssh key.")
     def test_clone_via_ssh(self):
         """ Test downloading a file.
         """
