@@ -21,6 +21,7 @@ _PROJECT = "http://169.254.169.254/computeMetadata/v1/project/"
 
 LOGGER = logging.getLogger(__name__)
 
+
 def _get(url):
     """ Create a request object for a given url.
 
@@ -50,7 +51,7 @@ def shutdown():
         logging.info("Instance %s will be shut down.", instance)
 
         sp = discovery.build("compute", "v1")
-        req = sp.instances().delete( # pylint: disable=no-member
+        req = sp.instances().delete(  # pylint: disable=no-member
             project=project, zone=zone, instance=instance)
         req.headers["Authorization"] = auth.header_str()
 

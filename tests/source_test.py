@@ -17,12 +17,13 @@ import os.path
 import shutil
 import sys
 import unittest
-from roadie import source # pylint: disable=import-error
+from roadie import source  # pylint: disable=import-error
 
 
 REPO_SSH = "git@github.com:jkawamoto/roadie-gcp.git"
 REPO_HTTPS = "https://github.com/jkawamoto/roadie-gcp.git"
 CHECK_FILE = "README.md"
+
 
 class TestSource(unittest.TestCase):
     """ Test case for source method.
@@ -30,6 +31,7 @@ class TestSource(unittest.TestCase):
     Skip testing of `url` sectiong because it is depened on download module and
     we have other tests for the module.
     """
+
     def setUp(self):
         """ Create a temporal directory.
         """

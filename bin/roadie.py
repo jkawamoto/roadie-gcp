@@ -36,6 +36,7 @@ URL = "url"
 
 LOGGER = logging.getLogger(__name__)
 
+
 def source(conf, cwd=None):
     """ Prepare source files from git, dropbox, gs, and/or web.
 
@@ -154,11 +155,11 @@ def main():
     parser.add_argument(
         "--no-shutdown", default=True, action="store_false", dest="halt",
         help="Not shutdown after finishing tasks."
-        )
+    )
     parser.add_argument(
         "--no-unzip", default=True, action="store_false", dest="unzip",
         help="Not unzip zipped files."
-        )
+    )
 
     run(**vars(parser.parse_args()))
 

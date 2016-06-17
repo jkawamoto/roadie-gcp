@@ -15,16 +15,18 @@ import sys
 import unittest
 import os
 from os import path
-import downloader # pylint: disable=import-error
+import downloader  # pylint: disable=import-error
 
 SAMPLE_FILE = "https://raw.githubusercontent.com/jkawamoto/roadie-gcp/master/bin/entrypoint.sh"
-ORIGINAL_FILE = path.normpath(path.join(path.dirname(__file__), "..", "bin/entrypoint.sh"))
+ORIGINAL_FILE = path.normpath(
+    path.join(path.dirname(__file__), "..", "bin/entrypoint.sh"))
 print ORIGINAL_FILE
 
 
 class TestDownloader(unittest.TestCase):
     """ Test case for download module.
     """
+
     def test_download(self):
         """ Test downloading a file.
         """
