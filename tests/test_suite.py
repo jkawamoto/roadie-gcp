@@ -15,6 +15,7 @@ import sys
 import unittest
 
 from . import downloader_test
+from . import source_test
 
 def suite():
     """ Return a test suite.
@@ -22,6 +23,7 @@ def suite():
     loader = unittest.TestLoader()
     res = unittest.TestSuite()
     res.addTest(loader.loadTestsFromModule(downloader_test))
+    res.addTest(loader.loadTestsFromModule(source_test))
     return res
 
 

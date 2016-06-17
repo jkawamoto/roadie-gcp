@@ -24,13 +24,50 @@ import shutdown
 TEMPPATH = "/tmp/stdout{0}.txt"
 
 # Static variables.
+SOURCE = "source"
 DATA = "data"
 RUN = "run"
 RESULT = "result"
 DESTINATION = "destination"
 PATTERN = "pattern"
 
+GIT = "git"
+URL = "url"
+
 LOGGER = logging.getLogger(__name__)
+
+def source(conf, cwd=None):
+    """ Prepare source files from git, dropbox, gs, and/or web.
+
+    Args:
+      conf: a part of configure object.
+      cwd: working directory. (Default: current directory)
+    """
+    if not cwd:
+        cwd = "."
+
+    if GIT in conf:
+        path = conf[GIT]
+        proc = subprocess.Popen(
+            ["git", "clone", path, "."], stdout=sys.stdout, cwd=cwd)
+        proc.communicate()
+
+    if URL in conf:
+        path = conf[URL]
+        download(path)
+
+    pkg = os.path.join(cwd, "requirements.in")
+    if os.path.exists(pkg):
+        proc = subprocess.Popen(
+            ["pip-compile", pkg], stdout=sys.stdout)
+        proc.communicate()
+
+    pkg = os.path.join(cwd, "requirements.txt")
+    if os.path.exists(pkg):
+        proc = subprocess.Popen(
+            ["pip", "install", "-r", pkg], stdout=sys.stdout)
+        proc.communicate()
+
 
 def execute(command, stdout, stderr=sys.stdout):
     """ Run a given command.
@@ -70,6 +107,10 @@ def run(conf, halt, unzip):
     try:
         # Loading conf.
         obj = yaml.load(conf)
+
+        # Prepare sources.
+        if SOURCE in obj:
+            source(obj[SOURCE])
 
         # Prepare data.
         if DATA in obj:
