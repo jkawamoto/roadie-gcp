@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# pylint: skip-file
 #
 # downloader_test.py
 #
@@ -16,7 +15,7 @@ import sys
 import unittest
 import os
 from os import path
-import downloader
+import downloader # pylint: disable=import-error
 
 SAMPLE_FILE = "https://raw.githubusercontent.com/jkawamoto/roadie-gcp/master/bin/entrypoint.sh"
 ORIGINAL_FILE = path.normpath(path.join(path.dirname(__file__), "..", "bin/entrypoint.sh"))
