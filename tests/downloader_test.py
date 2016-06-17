@@ -1,4 +1,14 @@
 #! /usr/bin/env python
+# pylint: skip-file
+#
+# downloader_test.py
+#
+# Copyright (c) 2015-2016 Junpei Kawamoto
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
 """ Test for downloader module.
 """
 import logging
@@ -8,8 +18,8 @@ import os
 from os import path
 import downloader
 
-SAMPLE_FILE = "https://raw.githubusercontent.com/jkawamoto/roadie-gcp/master/README.md"
-ORIGINAL_FILE = path.normpath(path.join(path.dirname(__file__), "..", "README.md"))
+SAMPLE_FILE = "https://raw.githubusercontent.com/jkawamoto/roadie-gcp/master/bin/entrypoint.sh"
+ORIGINAL_FILE = path.normpath(path.join(path.dirname(__file__), "..", "bin/entrypoint.sh"))
 print ORIGINAL_FILE
 
 

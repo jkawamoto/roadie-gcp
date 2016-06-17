@@ -6,6 +6,4 @@ install:
   - pip-compile
   - pip install -r requirements.txt
 script:
-  - python --version
-  - cd bin
-  - ./downloader-test.py
+  - python setup.py test
