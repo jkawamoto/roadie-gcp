@@ -26,7 +26,8 @@ class Auth(object):
     def execute(self):
         """ Run an authentication protocol to obtain a credential.
         """
-        req = urllib2.Request("{0}/{1}/token".format(_METADATA_SERVER, _SERVICE_ACCOUNT))
+        req = urllib2.Request(
+            "{0}/{1}/token".format(_METADATA_SERVER, _SERVICE_ACCOUNT))
         req.add_header("Metadata-Flavor", "Google")
 
         data = json.load(urllib2.urlopen(req))

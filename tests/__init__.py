@@ -9,4 +9,6 @@
 #
 """ Unit test for roadie-gcp.
 """
+import sys
+sys.path.append("bin")
 from test_suite import suite

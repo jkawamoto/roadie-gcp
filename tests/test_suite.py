@@ -17,6 +17,7 @@ import unittest
 from . import downloader_test
 from . import source_test
 
+
 def suite():
     """ Return a test suite.
     """

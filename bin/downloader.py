@@ -95,7 +95,8 @@ def dropbox(url, dest):
     Returns:
       Downloaded filename.
     """
-    new_url = "https://{host}{path}?dl=1".format(host=url.netloc, path=url.path)
+    new_url = "https://{host}{path}?dl=1".format(
+        host=url.netloc, path=url.path)
 
     with contextlib.closing(_open_url(new_url)) as res:
         disposition = res.info().getheader("content-disposition")
@@ -125,7 +126,7 @@ def download(url, unzip=True):
     # Check the url contains a destination path.
     dest = "."
     if url.find(":") != url.rfind(":"):
-        dest = url[url.rfind(":")+1:]
+        dest = url[url.rfind(":") + 1:]
         url = url[:url.rfind(":")]
 
     # Parse the URL.
@@ -133,7 +134,7 @@ def download(url, unzip=True):
 
     # If the destination path is a directory, use filename as same as URL.
     if os.path.isdir(dest) or dest[:-1] == "/":
-        dest = os.path.join(dest, purl.path[purl.path.rfind("/")+1:])
+        dest = os.path.join(dest, purl.path[purl.path.rfind("/") + 1:])
 
     # Choose downloader.
     downloader = curl
