@@ -24,6 +24,7 @@ import shutdown
 TEMPPATH = "/tmp/stdout{0}.txt"
 
 # Static variables.
+APT = "apt"
 SOURCE = "source"
 DATA = "data"
 RUN = "run"
@@ -35,6 +36,21 @@ GIT = "git"
 URL = "url"
 
 LOGGER = logging.getLogger(__name__)
+
+
+def apt(conf):
+    """ Install packages via apt-get.
+
+    Args:
+      conf: list of packages.
+    """
+    proc = subprocess.Popen(
+        ["apt-get", "update"], stdout=sys.stdout)
+    proc.communicate()
+
+    proc = subprocess.Popen(
+        ["apt-get", "install", "-y"] + conf, stdout=sys.stdout)
+    proc.communicate()
 
 
 def source(conf, cwd=None):
@@ -108,6 +124,10 @@ def run(conf, halt, unzip):
     try:
         # Loading conf.
         obj = yaml.load(conf)
+
+        # Prepare packages.
+        if APT in obj:
+            apt(obj[APT])
 
         # Prepare sources.
         if SOURCE in obj:
