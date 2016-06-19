@@ -15,25 +15,24 @@ Instructions for Roadie-GCP are simple YAML documents like
 ```
 apt:
   - nodejs
-source:
-  git: https://github.com/itslab-kyushu/youtube-comment-scraper.git
+source: https://github.com/itslab-kyushu/youtube-comment-scraper.git
 data:
   - http://sample.com/run.sh
   - gs://a-project/input/data:/tmp
 run:
   - npm install
   - run.sh /tmp/data
-result:
-  destination: gs://a-project/result/
-  pattern:
-    - "*.out"
+result: gs://a-project/result/
+upload:
+  - "*.out"
 ```
 
 This example commands Roadie-GCP to install `nodejs` via apt,
 and download source codes from a Github repository. Then,
 it prepares to data from some web server and Google Cloud Storage,
 and run a command `run.sh /tmp/data`.
-Finally, it uploads results which have extention `.out` to a bucket in Google Cloud Storage. Roadie-GCP automatically shutdowns the virtual machine Roadie-GCP is running on, so you can minimize charge.
+Finally, it uploads stdout and results which have extention `.out` to a bucket in Google Cloud Storage.
+Roadie-GCP automatically shutdowns the virtual machine Roadie-GCP is running on, so you can minimize charge.
 
 Run
 ----
@@ -67,7 +66,7 @@ optional arguments:
 Instruction
 -------------
 An instruction file is a YAML document. It has three top-level elements;
-`apt`, `source`, `data`, `run`, and `result`.
+`apt`, `source`, `data`, `run`, `result`, and `upload`.
 
 ### apt
 The `apt` section specifies a package list to be installed via apt.
@@ -82,40 +81,34 @@ apt:
 
 ### souce
 The `source` section specifics how to obtain source codes.
-It supports `git` and `url`.
-
-`git` takes repository url which will be used with `git clone`.
+It could have either git repository URL or normal URL.
+A git repository URL is a URL ends with `.git`.
+Such URLs will be used with `git clone`.
 If you want to use ssh to connect your repository,
 you may need to deploy valid ssh keys in `/root/.ssh` in this container.
-
-`url` takes some url to obtain source codes.
-In addition to the basic scheme `http` and `https`, this url supports
-`gs` which means an object in Google Cloud Storage, and `dropbox`.
+For *normal URL*, in addition to the basic scheme `http` and `https`,
+this url supports `gs` which means an object in Google Cloud Storage, and `dropbox`.
 See the next section for detail.
 
 #### Example
 ##### Clone source code from a git repository:
 ```
-source:
-  git: https://github.com/itslab-kyushu/youtube-comment-scraper.git
+source: https://github.com/itslab-kyushu/youtube-comment-scraper.git
 ```
 
 ##### Download source code from some web server:
 ```
-source:
-  url: https://exmaple.com/abc.txt
+source: https://exmaple.com/abc.txt
 ```
 
 ##### Download source code from Google Cloud Storage:
 ```
-source:
-  url: gs:://your_bucket/path_to_object
+source: gs:://your_bucket/path_to_object
 ```
 
 ##### Download source code from Dropbox:
 ```
-source:
-  url: dropbox://www.dropbox.com/sh/abcdefg/ABCDEFGHIJKLMN
+source: dropbox://www.dropbox.com/sh/abcdefg/ABCDEFGHIJKLMN
 ```
 
 ### data
@@ -144,9 +137,12 @@ On the other hands, STRERR will be outputted to docker logs.
 ### result
 The `result` section specifies where outputted results should be stored.
 Outputted results include STDOUT of each commands.
-This section consists of two elements.
-The first one is `destination` and it specifies a place of Google Cloud Storage. It must be a URL of which scheme is `gs`.
-The other element is `pattern` and it consist of a list of glob patterns.
+Roadie-GCP supports only a place in Google Cloud Storage, currently.
+Thus, the value of the `result` element must be a URL of which scheme is `gs`.
+
+### upload
+The `upload` section specifies other files to be uploaded as results.
+This section consist of a list of glob patterns.
 Objects matching to one of the patterns will be uploaded to the cloud storage. Each glob pattern can have a destination after `:`.
 For example, `"*.out:result` means objects matching `*.out` will be uploaded to `result` folder.
 
