@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# py lint: skip-file
 #
 # downloader_test.py
 #
@@ -51,7 +50,7 @@ class TestSource(unittest.TestCase):
     def test_clone_via_ssh(self):
         """ Test downloading a file.
         """
-        source(dict(git=REPO_SSH), self.dir)
+        source(REPO_SSH, self.dir)
         with open(os.path.join(self.dir, CHECK_FILE)) as res:
             with open(CHECK_FILE) as ans:
                 self.assertEqual(res.read(), ans.read())
@@ -59,7 +58,7 @@ class TestSource(unittest.TestCase):
     def test_clone_via_https(self):
         """ Test downloading a file.
         """
-        source(dict(git=REPO_HTTPS), self.dir)
+        source(REPO_HTTPS, self.dir)
         with open(os.path.join(self.dir, CHECK_FILE)) as res:
             with open(CHECK_FILE) as ans:
                 self.assertEqual(res.read(), ans.read())

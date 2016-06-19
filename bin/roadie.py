@@ -2,7 +2,7 @@
 #
 # roadie.py
 #
-# Copyright (c) 2015 Junpei Kawamoto
+# Copyright (c) 2015-2016 Junpei Kawamoto
 #
 # This software is released under the MIT License.
 #
@@ -29,11 +29,7 @@ SOURCE = "source"
 DATA = "data"
 RUN = "run"
 RESULT = "result"
-DESTINATION = "destination"
-PATTERN = "pattern"
-
-GIT = "git"
-URL = "url"
+UPLOAD = "upload"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -57,21 +53,19 @@ def source(conf, cwd=None):
     """ Prepare source files from git, dropbox, gs, and/or web.
 
     Args:
-      conf: a part of configure object.
+      conf: url of a source repository.
       cwd: working directory. (Default: current directory)
     """
     if not cwd:
         cwd = "."
 
-    if GIT in conf:
-        path = conf[GIT]
+    if conf.endswith(".git"):
         proc = subprocess.Popen(
-            ["git", "clone", path, "."], stdout=sys.stdout, cwd=cwd)
+            ["git", "clone", conf, "."], stdout=sys.stdout, cwd=cwd)
         proc.communicate()
 
-    if URL in conf:
-        path = conf[URL]
-        download(path)
+    else:
+        download(conf)
 
     pkg = os.path.join(cwd, "requirements.in")
     if os.path.exists(pkg):
@@ -146,11 +140,11 @@ def run(conf, halt, unzip):
                 execute(com, fp)
 
         # Upload results.
-        dest = obj[RESULT][DESTINATION]
+        dest = obj[RESULT]
         LOGGER.info("Uploading stdout.")
         upload(TEMPPATH.format("*"), dest)
-        if PATTERN in obj[RESULT]:
-            for pat in obj[RESULT][PATTERN]:
+        if UPLOAD in obj:
+            for pat in obj[UPLOAD]:
                 LOGGER.info("Uploading %s", pat)
                 upload(pat, dest)
 
