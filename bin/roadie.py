@@ -29,8 +29,7 @@ SOURCE = "source"
 DATA = "data"
 RUN = "run"
 RESULT = "result"
-DESTINATION = "destination"
-PATTERN = "pattern"
+UPLOAD = "upload"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -141,11 +140,11 @@ def run(conf, halt, unzip):
                 execute(com, fp)
 
         # Upload results.
-        dest = obj[RESULT][DESTINATION]
+        dest = obj[RESULT]
         LOGGER.info("Uploading stdout.")
         upload(TEMPPATH.format("*"), dest)
-        if PATTERN in obj[RESULT]:
-            for pat in obj[RESULT][PATTERN]:
+        if UPLOAD in obj:
+            for pat in obj[UPLOAD]:
                 LOGGER.info("Uploading %s", pat)
                 upload(pat, dest)
 
