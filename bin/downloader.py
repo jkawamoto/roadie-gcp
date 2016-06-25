@@ -146,10 +146,24 @@ def download(url, unzip=True):
     LOGGER.info("Downloading %s to %s", url, dest)
     res = downloader(purl, dest)
 
-    # If donloaded file is a zip, unzip and remove it.
     if unzip and res.endswith(".zip"):
+        # If donloaded file is a zip, unzip and remove it.
         LOGGER.info("Unzipping %s", res)
         p = subprocess.Popen(
-            ["unzip", "-o", res], stdout=sys.stdout, cwd=os.path.dirname(res))
-        p.wait()
+            ["unzip", "-o", "-d", os.path.dirname(res), res], stdout=sys.stdout)
+        p.communicate()
+        os.remove(res)
+
+    elif res.endswith(".tar.gz"):
+        LOGGER.info("Unpacking %s", res)
+        p = subprocess.Popen(
+            ["tar", "-zxvf", res], stdout=sys.stdout, cwd=os.path.dirname(res))
+        p.communicate()
+        os.remove(res)
+
+    elif res.endswith(".tar"):
+        LOGGER.info("Unpacking %s", res)
+        p = subprocess.Popen(
+            ["tar", "-xvf", res], stdout=sys.stdout, cwd=os.path.dirname(res))
+        p.communicate()
         os.remove(res)
