@@ -31,7 +31,7 @@ This example commands Roadie-GCP to install `nodejs` via apt,
 and download source codes from a Github repository. Then,
 it prepares to data from some web server and Google Cloud Storage,
 and run a command `run.sh /tmp/data`.
-Finally, it uploads stdout and results which have extention `.out` to a bucket in Google Cloud Storage.
+Finally, it uploads stdout and results which have extension `.out` to a bucket in Google Cloud Storage.
 Roadie-GCP automatically shutdowns the virtual machine Roadie-GCP is running on, so you can minimize charge.
 
 Run
@@ -41,7 +41,7 @@ Letting `conf.yml` be an instruction file,
 $ docker run -i jkawamoto/roadie-gcp < conf.yml
 ```
 starts Roadie-GCP with the instruction.
-You also specify an instruction file insted of STDIN by
+You also specify an instruction file instead of STDIN by
 ```
 $ docker run -i jkawamoto/roadie-gcp -c /path/to/conf.yml
 ```
