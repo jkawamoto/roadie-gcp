@@ -12,3 +12,8 @@ pyyaml
 pycrypto
 pyOpenSSL
 crcmod
+
+# This software needs `gsutil`, too, but it will be installed via downloading
+# binary file directory.
+# To run this software locally,
+# get it from https://storage.googleapis.com/pub/gsutil.tar.gz.
