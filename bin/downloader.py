@@ -80,7 +80,8 @@ def gsutil(url, dest):
       Path for the downloaded file.
     """
     p = subprocess.Popen(
-        ["gsutil", "cp", urlparse.urlunparse(url), dest], stdout=sys.stdout)
+        ["gsutil", "cp", urlparse.urlunparse(url), dest],
+        stdout=sys.stdout, stderr=sys.stderr)
     p.wait()
     return dest
 
@@ -150,20 +151,23 @@ def download(url, unzip=True):
         # If donloaded file is a zip, unzip and remove it.
         LOGGER.info("Unzipping %s", res)
         p = subprocess.Popen(
-            ["unzip", "-o", "-d", os.path.dirname(res), res], stdout=sys.stdout)
+            ["unzip", "-o", "-d", os.path.dirname(res), res],
+            stdout=sys.stdout, stderr=sys.stderr)
         p.communicate()
         os.remove(res)
 
     elif res.endswith(".tar.gz"):
         LOGGER.info("Unpacking %s", res)
         p = subprocess.Popen(
-            ["tar", "-zxvf", res], stdout=sys.stdout, cwd=os.path.dirname(res))
+            ["tar", "-zxvf", res], cwd=os.path.dirname(res),
+            stdout=sys.stdout, stderr=sys.stderr)
         p.communicate()
         os.remove(res)
 
     elif res.endswith(".tar"):
         LOGGER.info("Unpacking %s", res)
         p = subprocess.Popen(
-            ["tar", "-xvf", res], stdout=sys.stdout, cwd=os.path.dirname(res))
+            ["tar", "-xvf", res], cwd=os.path.dirname(res),
+            stdout=sys.stdout, stderr=sys.stderr)
         p.communicate()
         os.remove(res)

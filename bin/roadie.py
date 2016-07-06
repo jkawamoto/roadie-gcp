@@ -41,11 +41,11 @@ def apt(conf):
       conf: list of packages.
     """
     proc = subprocess.Popen(
-        ["apt-get", "update"], stdout=sys.stdout)
+        ["apt-get", "update"], stdout=sys.stdout, stderr=sys.stderr)
     proc.communicate()
 
     proc = subprocess.Popen(
-        ["apt-get", "install", "-y"] + conf, stdout=sys.stdout)
+        ["apt-get", "install", "-y"] + conf, stdout=sys.stdout, stderr=sys.stderr)
     proc.communicate()
 
 
@@ -61,7 +61,8 @@ def source(conf, cwd=None):
 
     if conf.endswith(".git"):
         proc = subprocess.Popen(
-            ["git", "clone", conf, "."], stdout=sys.stdout, cwd=cwd)
+            ["git", "clone", conf, "."],
+            cwd=cwd, stdout=sys.stdout, stderr=sys.stderr)
         proc.communicate()
 
     else:
@@ -70,13 +71,13 @@ def source(conf, cwd=None):
     pkg = os.path.join(cwd, "requirements.in")
     if os.path.exists(pkg):
         proc = subprocess.Popen(
-            ["pip-compile", pkg], stdout=sys.stdout)
+            ["pip-compile", pkg], stdout=sys.stdout, stderr=sys.stderr)
         proc.communicate()
 
     pkg = os.path.join(cwd, "requirements.txt")
     if os.path.exists(pkg):
         proc = subprocess.Popen(
-            ["pip", "install", "-r", pkg], stdout=sys.stdout)
+            ["pip", "install", "-r", pkg], stdout=sys.stdout, stderr=sys.stderr)
         proc.communicate()
 
 
@@ -121,10 +122,12 @@ def run(conf, halt, unzip):
 
         # Prepare packages.
         if APT in obj:
+            LOGGER.info("Installing apt packages.")
             apt(obj[APT])
 
         # Prepare sources.
         if SOURCE in obj:
+            LOGGER.info("Downloading source files.")
             source(obj[SOURCE])
 
         # Prepare data.
