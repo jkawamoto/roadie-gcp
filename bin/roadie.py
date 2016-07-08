@@ -103,7 +103,7 @@ def upload(pat, dest):
       dest: Destination URL.
     """
     proc = subprocess.Popen(
-        ["gsutil", "cp", pat, dest], stdout=sys.stdout)
+        ["gsutil", "-m", "cp", pat, dest], stdout=sys.stdout, stderr=sys.stderr)
     proc.wait()
 
 
