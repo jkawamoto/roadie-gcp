@@ -12,19 +12,20 @@ Roadie-GCP
   * uploads results to Google Cloud Storage.
 
 Instructions for Roadie-GCP are simple YAML documents like
-```
+
+```yaml
 apt:
-  - nodejs
+- nodejs
 source: https://github.com/itslab-kyushu/youtube-comment-scraper.git
 data:
-  - http://sample.com/run.sh
-  - gs://a-project/input/data:/tmp
+- http://sample.com/run.sh
+- gs://a-project/input/data:/tmp
 run:
-  - npm install
-  - run.sh /tmp/data
+- npm install
+- run.sh /tmp/data
 result: gs://a-project/result/
 upload:
-  - "*.out"
+- "*.out"
 ```
 
 This example commands Roadie-GCP to install `nodejs` via apt,
@@ -37,12 +38,14 @@ Roadie-GCP automatically shutdowns the virtual machine Roadie-GCP is running on,
 Run
 ----
 Letting `conf.yml` be an instruction file,
-```
+
+```sh
 $ docker run -i jkawamoto/roadie-gcp < conf.yml
 ```
 starts Roadie-GCP with the instruction.
 You also specify an instruction file instead of STDIN by
-```
+
+```sh
 $ docker run -i jkawamoto/roadie-gcp -c /path/to/conf.yml
 ```
 
@@ -51,7 +54,8 @@ Thus, `https://www.googleapis.com/auth/compute` scope is required.
 To prevent this behavior, use `--no-shutdown` option.
 
 The full description of arguments is below.
-```
+
+~~~
 usage: docker run -i jkawamoto/roadie-gcp [-h] [-c CONF] [--no-shutdown]
 
 Read an instruction from STDIN and run programs in that way.
@@ -61,7 +65,7 @@ optional arguments:
   -c CONF, --conf CONF  Specify an instruction YAML file instead of STDIN.
   --no-shutdown         Not shutdown after finishing tasks.
   --no-unzip            Not unzip zipped files.  
-```
+~~~
 
 Instruction
 -------------
@@ -71,12 +75,12 @@ An instruction file is a YAML document. It has three top-level elements;
 ### apt
 The `apt` section specifies a package list to be installed via apt.
 
-~~~
+```yaml
 apt:
-  - nodejs
-  - package_a
-  - package_b
-~~~
+- nodejs
+- package_a
+- package_b
+```
 
 
 ### souce
@@ -92,22 +96,22 @@ See the next section for detail.
 
 #### Example
 ##### Clone source code from a git repository:
-```
+```yaml
 source: https://github.com/itslab-kyushu/youtube-comment-scraper.git
 ```
 
 ##### Download source code from some web server:
-```
+```yaml
 source: https://exmaple.com/abc.txt
 ```
 
 ##### Download source code from Google Cloud Storage:
-```
-source: gs:://your_bucket/path_to_object
+```yaml
+source: gs://your_bucket/path_to_object
 ```
 
 ##### Download source code from Dropbox:
-```
+```yaml
 source: dropbox://www.dropbox.com/sh/abcdefg/ABCDEFGHIJKLMN
 ```
 
@@ -148,4 +152,4 @@ For example, `"*.out:result` means objects matching `*.out` will be uploaded to 
 
 License
 --------
-This software is released under the MIT License, see LICENSE.
+This software is released under the MIT License, see [LICENSE](LICENSE).
