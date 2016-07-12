@@ -114,8 +114,10 @@ def download(url, unzip=True):
     """ Download an object specified by a url.
 
     Url can have a destination path. The format is
-      scheme://host/path
-      scheme://host/path:dest
+
+    -  scheme://host/path
+    -  scheme://host/path:dest
+
     where dest is the destination path.
 
     Scheme is one of http, https, gs, dropbox.
