@@ -1,0 +1,10 @@
+bin
+===
+
+.. toctree::
+   :maxdepth: 4
+
+   auth
+   downloader
+   roadie
+   shutdown

@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Basic usage &mdash; Roadie-GCP 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Roadie-GCP 0.1.0 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Roadie-GCP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="simple">
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/auth.html">auth module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/downloader.html">downloader module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/roadie.html">roadie module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/shutdown.html">shutdown module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Roadie-GCP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Basic usage</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/usage.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="basic-usage">
+<h1>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="run">
+<h2>Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h2>
+<p>Letting <cite>conf.yml</cite> be an instruction file,</p>
+<p><code class="docutils literal"><span class="pre">`sh</span>
+<span class="pre">$</span> <span class="pre">docker</span> <span class="pre">run</span> <span class="pre">-i</span> <span class="pre">jkawamoto/roadie-gcp</span> <span class="pre">&lt;</span> <span class="pre">conf.yml</span>
+<span class="pre">`</span></code>
+starts Roadie-GCP with the instruction.
+You also specify an instruction file instead of STDIN by</p>
+<p><code class="docutils literal"><span class="pre">`sh</span>
+<span class="pre">$</span> <span class="pre">docker</span> <span class="pre">run</span> <span class="pre">-i</span> <span class="pre">jkawamoto/roadie-gcp</span> <span class="pre">-c</span> <span class="pre">/path/to/conf.yml</span>
+<span class="pre">`</span></code></p>
+<p>Roadie-GCP will shutdown your VM after finishing instructions.
+Thus, <cite>https://www.googleapis.com/auth/compute</cite> scope is required.
+To prevent this behavior, use <cite>&#8211;no-shutdown</cite> option.</p>
+<p>The full description of arguments is below.</p>
+<p>~~~
+usage: docker run -i jkawamoto/roadie-gcp [-h] [-c CONF] [&#8211;no-shutdown]</p>
+<p>Read an instruction from STDIN and run programs in that way.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-c <var>CONF</var></span>, <span class="option">--conf <var>CONF</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Specify an instruction YAML file instead of STDIN.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--no-shutdown</span></kbd></td>
+<td>Not shutdown after finishing tasks.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--no-unzip</span></kbd></td>
+<td>Not unzip zipped files.</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>~~~</p>
+</div>
+<div class="section" id="instruction">
+<h2>Instruction<a class="headerlink" href="#instruction" title="Permalink to this headline">¶</a></h2>
+<p>An instruction file is a YAML document. It has three top-level elements;
+<cite>apt</cite>, <cite>source</cite>, <cite>data</cite>, <cite>run</cite>, <cite>result</cite>, and <cite>upload</cite>.</p>
+<p>### apt
+The <cite>apt</cite> section specifies a package list to be installed via apt.</p>
+<p><code class="docutils literal"><span class="pre">`yaml</span>
+<span class="pre">apt:</span>
+<span class="pre">-</span> <span class="pre">nodejs</span>
+<span class="pre">-</span> <span class="pre">package_a</span>
+<span class="pre">-</span> <span class="pre">package_b</span>
+<span class="pre">`</span></code></p>
+<p>### souce
+The <cite>source</cite> section specifics how to obtain source codes.
+It could have either git repository URL or normal URL.
+A git repository URL is a URL ends with <cite>.git</cite>.
+Such URLs will be used with <cite>git clone</cite>.
+If you want to use ssh to connect your repository,
+you may need to deploy valid ssh keys in <cite>/root/.ssh</cite> in this container.
+For <em>normal URL</em>, in addition to the basic scheme <cite>http</cite> and <cite>https</cite>,
+this url supports <cite>gs</cite> which means an object in Google Cloud Storage, and <cite>dropbox</cite>.
+See the next section for detail.</p>
+<p>#### Example
+##### Clone source code from a git repository:
+<code class="docutils literal"><span class="pre">`yaml</span>
+<span class="pre">source:</span> <span class="pre">https://github.com/itslab-kyushu/youtube-comment-scraper.git</span>
+<span class="pre">`</span></code></p>
+<p>##### Download source code from some web server:
+<code class="docutils literal"><span class="pre">`yaml</span>
+<span class="pre">source:</span> <span class="pre">https://exmaple.com/abc.txt</span>
+<span class="pre">`</span></code></p>
+<p>##### Download source code from Google Cloud Storage:
+<code class="docutils literal"><span class="pre">`yaml</span>
+<span class="pre">source:</span> <span class="pre">gs://your_bucket/path_to_object</span>
+<span class="pre">`</span></code></p>
+<p>##### Download source code from Dropbox:
+<code class="docutils literal"><span class="pre">`yaml</span>
+<span class="pre">source:</span> <span class="pre">dropbox://www.dropbox.com/sh/abcdefg/ABCDEFGHIJKLMN</span>
+<span class="pre">`</span></code></p>
+<p>### data
+The <cite>data</cite> section specifies URLs to be downloaded.
+It must be a list of extended URLs and the format of extended URL is
+<code class="docutils literal"><span class="pre">`</span>
+<span class="pre">scheme://hostname/path</span>
+<span class="pre">`</span></code>
+or
+<code class="docutils literal"><span class="pre">`</span>
+<span class="pre">scheme://hostname/path:dest</span>
+<span class="pre">`</span></code>
+URL schemes Roadie-GCP supports are <cite>gs</cite>, <cite>dropbox</cite> and schemes which <cite>curl</cite> supports. To download objects, Roadie-GCP uses <cite>curl</cite> but uses <cite>gsutil</cite> for <cite>gs</cite> scheme. <cite>dropbox</cite> is a pseudo scheme to download objects from [Dropbox](<a class="reference external" href="https://www.dropbox.com/">https://www.dropbox.com/</a>). To use this scheme, get public URL from Dropbox and then replace <cite>https</cite> to <cite>dropbox</cite>. When you download objects via Dropbox&#8217;s public link, they are zipped. Using <cite>dropbox</cite> scheme will unzip those objects.</p>
+<p>Downloaded objects will be put in <cite>/data</cite> which is the default working directory.
+You can also use the second format of URL to specify destinations of objects.</p>
+<p>### run
+The <cite>run</cite> section specifies what commands will be run.
+It must be a list of commands.
+Those commands will be executed via shell.
+STDOUT of those commands will be stored to files named <cite>stdout*.txt</cite> and uploaded to Google Cloud Storage.
+For example, the outputs of the first commands will be stored to <cite>stdout0.txt</cite>.
+On the other hands, STRERR will be outputted to docker logs.</p>
+<p>### result
+The <cite>result</cite> section specifies where outputted results should be stored.
+Outputted results include STDOUT of each commands.
+Roadie-GCP supports only a place in Google Cloud Storage, currently.
+Thus, the value of the <cite>result</cite> element must be a URL of which scheme is <cite>gs</cite>.</p>
+<p>### upload
+The <cite>upload</cite> section specifies other files to be uploaded as results.
+This section consist of a list of glob patterns.
+Objects matching to one of the patterns will be uploaded to the cloud storage. Each glob pattern can have a destination after <cite>:</cite>.
+For example, <cite>&#8220;*.out:result</cite> means objects matching <cite>*.out</cite> will be uploaded to <cite>result</cite> folder.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Junpei Kawamoto.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>downloader &mdash; Roadie-GCP 0.9.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Roadie-GCP 0.9.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Roadie-GCP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../run.html">Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../instruction.html">Instruction file</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/auth.html">auth module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/downloader.html">downloader module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/roadie.html">roadie module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/shutdown.html">shutdown module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Roadie-GCP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>downloader</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for downloader</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># downloader.py</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2015-2016 Junpei Kawamoto</span>
+<span class="c1">#</span>
+<span class="c1"># This software is released under the MIT License.</span>
+<span class="c1">#</span>
+<span class="c1"># http://opensource.org/licenses/mit-license.php</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot; Download objects from several services.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">urlparse</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_open_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Open a URL by urllib2 via gzip encoding.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      url: URL string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Response object returned by urllib2.urlopen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s2">&quot;Accept-encoding&quot;</span><span class="p">,</span> <span class="s2">&quot;gzip&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_copy_response</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Copy a response opened by urllib2 to a destination.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      res: Response made by urllib2.urlopen.</span>
+<span class="sd">      dest: Destination path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Encoding&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;gzip&quot;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="p">(</span><span class="n">fileobj</span><span class="o">=</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="curl"><a class="viewcode-back" href="../modules/downloader.html#downloader.curl">[docs]</a><span class="k">def</span> <span class="nf">curl</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Download an object using curl.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      url: Parsed URL specifying an object.</span>
+<span class="sd">      dest: Destination path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Path for the downloaded file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">closing</span><span class="p">(</span><span class="n">_open_url</span><span class="p">(</span><span class="n">urlparse</span><span class="o">.</span><span class="n">urlunparse</span><span class="p">(</span><span class="n">url</span><span class="p">)))</span> <span class="k">as</span> <span class="n">res</span><span class="p">:</span>
+        <span class="n">_copy_response</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dest</span></div>
+
+
+<div class="viewcode-block" id="gsutil"><a class="viewcode-back" href="../modules/downloader.html#downloader.gsutil">[docs]</a><span class="k">def</span> <span class="nf">gsutil</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Download an object using gsutil.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      url: Parsed URL specifying an object.</span>
+<span class="sd">      dest: Destination path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Path for the downloaded file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;gsutil&quot;</span><span class="p">,</span> <span class="s2">&quot;cp&quot;</span><span class="p">,</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlunparse</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">dest</span><span class="p">],</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">dest</span></div>
+
+
+<div class="viewcode-block" id="dropbox"><a class="viewcode-back" href="../modules/downloader.html#downloader.dropbox">[docs]</a><span class="k">def</span> <span class="nf">dropbox</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Download an object from dropbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      url: Parsed URL specifying an object.</span>
+<span class="sd">      dest: Destination path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Downloaded filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_url</span> <span class="o">=</span> <span class="s2">&quot;https://{host}{path}?dl=1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">url</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">closing</span><span class="p">(</span><span class="n">_open_url</span><span class="p">(</span><span class="n">new_url</span><span class="p">))</span> <span class="k">as</span> <span class="n">res</span><span class="p">:</span>
+        <span class="n">disposition</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s2">&quot;content-disposition&quot;</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;filename=</span><span class="se">\&quot;</span><span class="s2">(.*)</span><span class="se">\&quot;</span><span class="s2">;&quot;</span><span class="p">,</span> <span class="n">disposition</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">):</span>
+            <span class="n">dest</span> <span class="o">+=</span> <span class="s2">&quot;.zip&quot;</span>
+
+        <span class="n">_copy_response</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dest</span></div>
+
+
+<div class="viewcode-block" id="download"><a class="viewcode-back" href="../modules/downloader.html#downloader.download">[docs]</a><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Download an object specified by a url.</span>
+
+<span class="sd">    Url can have a destination path. The format is</span>
+
+<span class="sd">    -  scheme://host/path</span>
+<span class="sd">    -  scheme://host/path:dest</span>
+
+<span class="sd">    where dest is the destination path.</span>
+
+<span class="sd">    Scheme is one of http, https, gs, dropbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      url: An extended url specifying the url of an object and an destination path.</span>
+<span class="sd">      unzip: If True and the object specified by the url is zipped, unzip them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check the url contains a destination path.</span>
+    <span class="n">dest</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">url</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">):</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="n">url</span><span class="p">[</span><span class="n">url</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="p">[:</span><span class="n">url</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)]</span>
+
+    <span class="c1"># Parse the URL.</span>
+    <span class="n">purl</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="c1"># If the destination path is a directory, use filename as same as URL.</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span> <span class="ow">or</span> <span class="n">dest</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">purl</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">purl</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+
+    <span class="c1"># Choose downloader.</span>
+    <span class="n">downloader</span> <span class="o">=</span> <span class="n">curl</span>
+    <span class="k">if</span> <span class="n">purl</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;gs&quot;</span><span class="p">:</span>
+        <span class="n">downloader</span> <span class="o">=</span> <span class="n">gsutil</span>
+    <span class="k">elif</span> <span class="n">purl</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;dropbox&quot;</span><span class="p">:</span>
+        <span class="n">downloader</span> <span class="o">=</span> <span class="n">dropbox</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Downloading </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">downloader</span><span class="p">(</span><span class="n">purl</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">unzip</span> <span class="ow">and</span> <span class="n">res</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">):</span>
+        <span class="c1"># If donloaded file is a zip, unzip and remove it.</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Unzipping </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;unzip&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">res</span><span class="p">],</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">res</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Unpacking </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;tar&quot;</span><span class="p">,</span> <span class="s2">&quot;-zxvf&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">res</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar&quot;</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Unpacking </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;tar&quot;</span><span class="p">,</span> <span class="s2">&quot;-xvf&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Junpei Kawamoto.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.9.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

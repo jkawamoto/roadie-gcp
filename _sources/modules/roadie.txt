@@ -1,0 +1,7 @@
+roadie module
+=============
+
+.. automodule:: roadie
+    :members:
+    :undoc-members:
+    :show-inheritance:

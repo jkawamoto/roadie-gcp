@@ -1,0 +1,7 @@
+shutdown module
+===============
+
+.. automodule:: shutdown
+    :members:
+    :undoc-members:
+    :show-inheritance:
