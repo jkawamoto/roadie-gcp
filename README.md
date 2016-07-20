@@ -3,6 +3,7 @@ Roadie-GCP
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![Build Status](https://travis-ci.org/jkawamoto/roadie-gcp.svg?branch=master)](https://travis-ci.org/jkawamoto/roadie-gcp)
 [![Code Climate](https://codeclimate.com/github/jkawamoto/roadie-gcp/badges/gpa.svg)](https://codeclimate.com/github/jkawamoto/roadie-gcp)
+[![Japanese](https://img.shields.io/badge/qiita-%E6%97%A5%E6%9C%AC%E8%AA%9E-brightgreen.svg)](http://qiita.com/jkawamoto/items/fbe28dbed533a7001f68)
 
 A helper container to execute a program on [Google Cloud Platform](https://cloud.google.com/).
 
