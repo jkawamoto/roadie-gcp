@@ -40,6 +40,24 @@
 
 <body class="wy-body-for-nav" role="document">
 
+  
+hogehoge
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-4734862314145555",
+    enable_page_level_ads: true
+  });
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-82315630-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
   <div class="wy-grid-for-nav">
 
     
@@ -127,18 +145,22 @@
 
 
 
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-          <li><a href="index.html">Module code</a> &raquo;</li>
+        <li><a href="index.html">Module code</a> &raquo;</li>
       
     <li>downloader</li>
-      <li class="wy-breadcrumbs-aside">
-        
+    <li class="wy-breadcrumbs-aside">
+      
           
-        
-      </li>
+      
+    </li>
   </ul>
   <hr/>
 </div>
@@ -244,7 +266,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">      Downloaded filename.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">new_url</span> <span class="o">=</span> <span class="s2">&quot;https://{host}{path}?dl=1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">new_url</span> <span class="o">=</span> <span class="s2">&quot;https://</span><span class="si">{host}{path}</span><span class="s2">?dl=1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">url</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">closing</span><span class="p">(</span><span class="n">_open_url</span><span class="p">(</span><span class="n">new_url</span><span class="p">))</span> <span class="k">as</span> <span class="n">res</span><span class="p">:</span>
@@ -258,7 +280,7 @@
     <span class="k">return</span> <span class="n">dest</span></div>
 
 
-<div class="viewcode-block" id="download"><a class="viewcode-back" href="../modules/downloader.html#downloader.download">[docs]</a><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="download"><a class="viewcode-back" href="../modules/downloader.html#downloader.download">[docs]</a><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Download an object specified by a url.</span>
 
 <span class="sd">    Url can have a destination path. The format is</span>

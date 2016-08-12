@@ -40,6 +40,24 @@
 
 <body class="wy-body-for-nav" role="document">
 
+  
+hogehoge
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-4734862314145555",
+    enable_page_level_ads: true
+  });
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-82315630-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
   <div class="wy-grid-for-nav">
 
     
@@ -127,18 +145,22 @@
 
 
 
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-          <li><a href="index.html">Module code</a> &raquo;</li>
+        <li><a href="index.html">Module code</a> &raquo;</li>
       
     <li>roadie</li>
-      <li class="wy-breadcrumbs-aside">
-        
+    <li class="wy-breadcrumbs-aside">
+      
           
-        
-      </li>
+      
+    </li>
   </ul>
   <hr/>
 </div>
@@ -165,11 +187,11 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">downloader</span> <span class="kn">import</span> <span class="n">download</span>
+<span class="kn">from</span> <span class="nn">downloader</span> <span class="k">import</span> <span class="n">download</span>
 <span class="kn">import</span> <span class="nn">shutdown</span>
 
 <span class="c1"># Template path of temporary files.</span>
-<span class="n">TEMPPATH</span> <span class="o">=</span> <span class="s2">&quot;/tmp/stdout{0}.txt&quot;</span>
+<span class="n">TEMPPATH</span> <span class="o">=</span> <span class="s2">&quot;/tmp/stdout</span><span class="si">{0}</span><span class="s2">.txt&quot;</span>
 
 <span class="c1"># Static variables.</span>
 <span class="n">APT</span> <span class="o">=</span> <span class="s2">&quot;apt&quot;</span>
@@ -197,7 +219,7 @@
     <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="source"><a class="viewcode-back" href="../modules/roadie.html#roadie.source">[docs]</a><span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="source"><a class="viewcode-back" href="../modules/roadie.html#roadie.source">[docs]</a><span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Prepare source files from git, dropbox, gs, and/or web.</span>
 
 <span class="sd">    Args:</span>
@@ -239,7 +261,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Does tail work to watch stdout to logging service?</span>
     <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
-        <span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
     <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
 
 
@@ -318,11 +340,11 @@
         <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--conf&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">FileType</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify an instruction YAML file instead of STDIN.&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--no-shutdown&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;halt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--no-shutdown&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;halt&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Not shutdown after finishing tasks.&quot;</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--no-unzip&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;unzip&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--no-unzip&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;unzip&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Not unzip zipped files.&quot;</span>
     <span class="p">)</span>
 
