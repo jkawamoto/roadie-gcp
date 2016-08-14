@@ -1,5 +1,3 @@
-:github_url: https://github.com/jkawamoto/roadie-gcp
-
 Roadie-GCP
 ===========
 A helper container to execute a program on `Google Cloud Platform <https://cloud.google.com/>`_.
