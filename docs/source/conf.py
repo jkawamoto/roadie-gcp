@@ -59,6 +59,10 @@ project = u'Roadie-GCP'
 copyright = u'2016, Junpei Kawamoto'
 author = u'Junpei Kawamoto'
 
+rst_prolog = """
+:github_url: https://github.com/jkawamoto/roadie-gcp
+"""
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
