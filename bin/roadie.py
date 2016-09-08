@@ -187,5 +187,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         sys.exit(1)
+    except Exception as e: # pylint: disable=broad-except
+        logging.exception("Error")
     finally:
         logging.shutdown()
