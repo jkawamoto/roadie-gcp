@@ -92,7 +92,9 @@ def execute(command, stdout, stderr=sys.stdout):
     # Does tail work to watch stdout to logging service?
     proc = subprocess.Popen(
         command, shell=True, stdout=stdout, stderr=stderr)
-    proc.wait()
+    if proc.wait():
+        # In case of stdout wasn't written, write a new line.
+        stdout.write("\n")
 
 
 def upload(pat, dest):
