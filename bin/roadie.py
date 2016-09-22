@@ -92,9 +92,7 @@ def execute(command, stdout, stderr=sys.stdout):
     # Does tail work to watch stdout to logging service?
     proc = subprocess.Popen(
         command, shell=True, stdout=stdout, stderr=stderr)
-    if proc.wait():
-        # In case of stdout wasn't written, write a new line.
-        stdout.write("\n")
+    proc.wait()
 
 
 def upload(pat, dest):
@@ -146,6 +144,8 @@ def run(conf, halt, unzip):
 
         # Upload results.
         dest = obj[RESULT]
+        if not dest.endswith("/"):
+            dest += "/"
         LOGGER.info("Uploading stdout.")
         upload(TEMPPATH.format("*"), dest)
         if UPLOAD in obj:
