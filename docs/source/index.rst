@@ -1,5 +1,9 @@
 Roadie-GCP
 ===========
+.. raw:: html
+
+   <div class="addthis_inline_share_toolbox"></div>
+
 A helper container to execute a program on `Google Cloud Platform <https://cloud.google.com/>`_.
 
 Features:
