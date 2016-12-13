@@ -4,8 +4,12 @@ build:
     - jkawamoto/sphinx:
         basedir: docs
         packages: sphinx-autobuild sphinxcontrib-napoleon -e git+https://github.com/snide/sphinx_rtd_theme#egg=sphinx_rtd_theme-master
+    - samueldebruyn/minify:
+        base_dir: docs/build/html
+        js: false
 deploy:
   steps:
     - jkawamoto/ghp-import:
         token: $GIT_TOKEN
         basedir: docs/build/html
+        baseurl: https://jkawamoto.github.io/roadie-gcp/
