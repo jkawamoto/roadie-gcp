@@ -33,7 +33,7 @@ RUN apt-get update && \
     apt-get install -y unzip libssl-dev python-pip python-dev libffi-dev && \
     apt-get upgrade -y && apt-get clean && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/
-RUN pip install -U pip && pip install -U pip==8.1.1 pip-tools
+RUN pip install -U pip && pip install -U pip pip-tools
 
 ## Install python packages.
 ADD ./requirements.in ./
