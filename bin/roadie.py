@@ -68,16 +68,17 @@ def source(conf, cwd=None):
     else:
         download(conf)
 
-    pkg = os.path.join(cwd, "requirements.in")
-    if os.path.exists(pkg):
-        proc = subprocess.Popen(
-            ["pip-compile", pkg], stdout=sys.stdout, stderr=sys.stderr)
-        proc.communicate()
+    # pkg = os.path.join(cwd, "requirements.in")
+    # if os.path.exists(pkg):
+    #     proc = subprocess.Popen(
+    #         ["pip-compile", pkg], stdout=sys.stdout, stderr=sys.stderr)
+    #     proc.communicate()
 
     pkg = os.path.join(cwd, "requirements.txt")
     if os.path.exists(pkg):
         proc = subprocess.Popen(
-            ["pip", "install", "-r", pkg], stdout=sys.stdout, stderr=sys.stderr)
+            ["pip", "install", "--exists-action", "i", "-r", pkg],
+            stdout=sys.stdout, stderr=sys.stderr)
         proc.communicate()
 
 
