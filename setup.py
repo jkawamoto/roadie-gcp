@@ -17,7 +17,7 @@ sys.path.append("bin")
 
 setup(
     name='roadie-gcp',
-    version='0.9.4',
+    version='0.9.5',
     description="A helper to execute a program on Google Cloud Platform.",
     author="Junpei Kawamoto",
     author_email="kawamoto.junpei@gmail.com",
