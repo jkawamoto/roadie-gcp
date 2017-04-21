@@ -48,7 +48,7 @@ def shutdown():
         zone = _get(_INSTANCE + "zone").split("/")[-1]
         project = _get(_PROJECT + "project-id")
 
-        logging.info("Instance %s will be shut down.", instance)
+        LOGGER.info("Instance %s will be shut down.", instance)
 
         sp = discovery.build("compute", "v1")
         req = sp.instances().delete(  # pylint: disable=no-member

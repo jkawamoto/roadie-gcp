@@ -31,7 +31,7 @@ RUN = "run"
 RESULT = "result"
 UPLOAD = "upload"
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("roadie")
 
 
 def apt(conf):
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         sys.exit(-1)
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         logging.exception("Error")
         sys.exit(1)
     finally:
