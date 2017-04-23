@@ -9,20 +9,27 @@
 #
 """ roadie-gcp package information.
 """
-from setuptools import setup, find_packages
 import sys
-
+from setuptools import setup, find_packages
 sys.path.append("bin")
 
-
 setup(
-    name='roadie-gcp',
-    version='0.9.5',
+    name="roadie-gcp",
+    use_scm_version=True,
     description="A helper to execute a program on Google Cloud Platform.",
     author="Junpei Kawamoto",
     author_email="kawamoto.junpei@gmail.com",
     url="https://github.com/jkawamoto/roadie-gcp",
     packages=find_packages(exclude=["tests"]),
-    test_suite='tests.suite',
-    license="MIT"
+    setup_requires=[
+        "setuptools_scm"
+    ],
+    test_suite="tests.suite",
+    license="MIT",
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Natural Language :: English",
+        "Programming Language :: Python",
+        "Topic :: Software Development :: Libraries",
+    ]
 )
