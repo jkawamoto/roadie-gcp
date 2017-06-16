@@ -21,6 +21,7 @@ _INSTANCE = "http://169.254.169.254/computeMetadata/v1/instance/"
 _PROJECT = "http://169.254.169.254/computeMetadata/v1/project/"
 
 LOGGER = logging.getLogger(__name__)
+logging.getLogger("googleapiclient.discovery").setLevel(logging.CRITICAL)
 
 
 def _get(url):
