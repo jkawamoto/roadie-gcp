@@ -2,7 +2,7 @@
 #
 # test_suite.py
 #
-# Copyright (c) 2015-2016 Junpei Kawamoto
+# Copyright (c) 2015-2017 Junpei Kawamoto
 #
 # This software is released under the MIT License.
 #
@@ -14,8 +14,8 @@ from __future__ import absolute_import
 import sys
 import unittest
 
-from . import downloader_test
-from . import source_test
+import tests.downloader_test
+import tests.source_test
 
 
 def suite():
@@ -23,8 +23,8 @@ def suite():
     """
     loader = unittest.TestLoader()
     res = unittest.TestSuite()
-    res.addTest(loader.loadTestsFromModule(downloader_test))
-    res.addTest(loader.loadTestsFromModule(source_test))
+    res.addTest(loader.loadTestsFromModule(tests.downloader_test))
+    res.addTest(loader.loadTestsFromModule(tests.source_test))
     return res
 
 
