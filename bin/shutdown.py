@@ -2,18 +2,19 @@
 #
 # shutdown.py
 #
-# Copyright (c) 2015 Junpei Kawamoto
+# Copyright (c) 2015-2017 Junpei Kawamoto
 #
 # This software is released under the MIT License.
 #
 # http://opensource.org/licenses/mit-license.php
 #
-""" Shuddown my insance.
+"""Shutdown my insance.
 """
+# pylint: disable=invalid-name
 import logging
 import sys
 import urllib2
-from apiclient import discovery
+from apiclient import discovery  # pylint: disable=import-error
 from auth import Auth
 
 _INSTANCE = "http://169.254.169.254/computeMetadata/v1/instance/"
@@ -50,7 +51,7 @@ def shutdown():
 
         LOGGER.info("Instance %s will be shut down.", instance)
 
-        sp = discovery.build("compute", "v1")
+        sp = discovery.build("compute", "v1", cache_discovery=False)
         req = sp.instances().delete(  # pylint: disable=no-member
             project=project, zone=zone, instance=instance)
         req.headers["Authorization"] = auth.header_str()
