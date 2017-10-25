@@ -59,7 +59,7 @@ master_doc = "index"
 
 # General information about the project.
 project = u"Roadie-GCP"
-copyright = u"2016, Junpei Kawamoto"
+copyright = u"2016-2017, Junpei Kawamoto"
 author = u"Junpei Kawamoto"
 
 rst_prolog = """
